@@ -76,7 +76,7 @@
             "Email": "={{ $json.Email }}",
             "Budget": "={{ $json.Budget }}",
             "Message": "={{ $json.Message }}",
-            "Date": "={{ $now }}",
+            "Date": "={{ $today }}",
             "Rejected": "={{ $if($json.Budget == \"0-1,000\", \"TRUE\", \"FALSE\") }}"
           },
           "matchingColumns": [
@@ -279,7 +279,9 @@
         "subject": "New Lead Inquiry - Action Required",
         "emailType": "text",
         "message": "=A new qualified lead has submitted an inquiry through the contact form.\n\n--- LEAD DETAILS ---\nName: {{ $('Filter').item.json['First Name'] }} {{ $('Filter').item.json['Last Name'] }}\nEmail: {{ $('Filter').item.json.Email }}\nBudget Range: ${{ $('Filter').item.json.Budget }}\nSubmitted: {{ $('Filter').item.json.Date }}\n\n--- MESSAGE ---\n{{ $('Filter').item.json.Message }}\n\n--- NEXT STEPS ---\nPlease follow up with this lead within 24 hours.\n\nBest regards,\nAutomated Lead System",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -303,7 +305,9 @@
         "subject": "Thanks for Your Interest - Let's Schedule a Call",
         "emailType": "text",
         "message": "=Hi {{ $json['First Name'] }},\n\nThank you for reaching out to us! We're excited about the opportunity to work with you.\n\nBased on your budget range and project requirements, I'd love to schedule a discovery call to discuss how we can help bring your vision to life.\n\nPlease book a convenient time on my calendar:\nhttps://calendly.com/yourcompany/discovery-call\n\nLooking forward to speaking with you soon!\n\nBest regards,\nThe ABC Company Team\n\n---\nThis is an automated response. A team member will also reach out to you personally within 24 hours.",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -327,7 +331,9 @@
         "subject": "Thank You for Your Interest in ABC Company",
         "emailType": "text",
         "message": "=Hi {{ $json['First Name'] }},\n\nThank you for reaching out to ABC Company! We appreciate your interest in our services.\n\nWe've received your inquiry and one of our sales representatives will review your request and get back to you within 1-2 business days with next steps.\n\nIn the meantime, feel free to explore our case studies and resources at:\nhttps://www.yourcompany.com/resources\n\nIf you have any urgent questions, please don't hesitate to reply to this email.\n\nBest regards,\nThe ABC Company Team\n\n---\nThis is an automated response confirming receipt of your inquiry.",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -438,7 +444,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "1a0de73f-1efb-4981-942e-18cf0b73bd44",
+  "versionId": "ad8ead1e-8f76-4608-b006-169fdf5f3202",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "9b6b1c3823058af552fdc0788850cf07f1ac2c19c39ec597bfd8af57b3d8f9b0"

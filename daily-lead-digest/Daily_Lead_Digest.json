@@ -1,0 +1,230 @@
+{
+  "name": "Daily Lead Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fjKkWt3erUBdJ9tUvKTGnswYcg6h0YCEDyyOhe0zoHo",
+          "mode": "list",
+          "cachedResultName": "n8n-leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fjKkWt3erUBdJ9tUvKTGnswYcg6h0YCEDyyOhe0zoHo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fjKkWt3erUBdJ9tUvKTGnswYcg6h0YCEDyyOhe0zoHo/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ $today }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "91a6b979-a11a-4ab5-a6c9-3bc0cdf7bc14",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZcGYNeheZoh2ujcb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        608,
+        0
+      ],
+      "id": "fb7d2f36-f4a6-4e84-bd07-edc2993b45ae",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c9399bd8-012b-425e-b2ba-b1abe62ec5e0",
+              "leftValue": "={{ $json.Called }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "d1f08e8e-cb4e-47c4-a5cc-1d4b99016eaa",
+              "leftValue": "={{ $json.Rejected }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        0
+      ],
+      "id": "e833c771-5cbd-4c73-950b-3714cfc6acd2",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Function Node\n// Input: JSON data in the format you provided\n// Output: One text string concatenating all people\n\n// Get the input data\nconst input = items[0].json;\n\n// Access the array of people\nconst people = input.data;\n\n// Build the text string\nlet result = people.map(person => {\n  return `Name: ${person[\"First Name\"]} ${person[\"Last Name\"]}\nEmail: ${person[\"Email\"]}\nBudget: ${person[\"Budget\"]}\nMessage: ${person[\"Message\"]}`;\n}).join(\"\\n\\n\"); // separate each person with blank line\n\n// Return as a single field\nreturn [\n  {\n    json: {\n      text: result\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "a4f1af2d-ca88-4cf5-99f7-2880ac00e903",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "okpor.david@gmail.com",
+        "subject": "List of New Leads",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "12206e7a-5559-4d98-a191-390fddc783ed",
+      "name": "Send a message",
+      "webhookId": "644ff09c-4aac-4051-99e4-b6280da658db",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ekaZVgmVYKvLFXRu",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        16,
+        0
+      ],
+      "id": "4f779d81-47a5-4bfd-be88-c76ddb6f8524",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "28650fb2-066a-48e9-9b61-69f7acb06679",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b6b1c3823058af552fdc0788850cf07f1ac2c19c39ec597bfd8af57b3d8f9b0"
+  },
+  "id": "DOgMe0TA1ozU_jmc9dbOq",
+  "tags": []
+}
